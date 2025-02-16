@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ITLINE</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" th:href="@{css/bootstrap.min.css}">
+
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Тестовое задание для ITLINE</h1>
+    <div class="text-center">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModalWindow">
+            Добавить
+        </button>
+        <button id="delete_button" disabled="disabled" type="button" class="btn btn-danger" data-bs-toggle="modal"
+                data-bs-target="#deleteModalWindow">
+            Удалить
+        </button>
+    </div>
+    <table class="table text-center">
+        <thead>
+        <tr>
+            <th class="text-center" scope="col">Чекбокс</th>
+            <th class="text-center" scope="col">Иконка</th>
+            <th class="text-center" scope="col">Название</th>
+            <th class="text-center" scope="col">Описание</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="car : ${cars}" th:data-id="${car.id}">
+            <th scope="row" class="text-center align-middle">
+                <label th:for="'checkbox-' + ${car.id}">
+                    <input type="checkbox" name="checkBox"
+                           th:id="'checkbox-' + ${car.id}" th:checked="${car.checkBox}"
+                           th:onchange="'updateCheckBox(' + ${car.id} + ')'"/>
+                </label>
+            </th>
+            <th class="text-center align-middle">
+                <img th:src="@{/images/{filename}(filename=${car.icon})}"
+                     alt="Иконка"
+                     width="32" height="32"/>
+            </th>
+            <td class="align-middle" th:text="${car.name}">Название</td>
+            <td class="align-middle" th:text="${car.description}">Описание</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div class="modal fade" id="addModalWindow" tabindex="-1" aria-labelledby="addModalWindowLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="addModalWindowLabel">Добавить новую машину</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-car-form">
+                    <input type="hidden" id="car-id">
+                    <div class="form-group">
+                        <label class="form-check-label" for="car-checkbox">Чекбокс</label>
+                        <input class="form-check-input" type="checkbox" id="car-checkbox"/>
+                    </div>
+                    <div class="dropdown">
+                        <label class="form-check-label" for="car-icon">Выберите машину</label>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="carSelectButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <img id="selectedCarIcon" th:src="@{/images/car1.png}"
+                                 alt="Иконка"
+                                 width="32" height="32"/>
+                        </button>
+                        <ul class="dropdown-menu" id="car-icon"
+                            style="min-width: auto; width: 16%; text-align: center;">
+                            <li><a class="dropdown-item" data-th-value="car1.png"><img
+                                    th:src="@{/images/car1.png}"
+                                    alt="Иконка"
+                                    width="32" height="32" style="display: block; margin: auto;"/></a></li>
+                            <li><a class="dropdown-item" data-th-value="car1.png"><img
+                                    th:src="@{/images/car2.png}"
+                                    alt="Иконка"
+                                    width="32" height="32" style="display: block; margin: auto;"/></a></li>
+                            <li><a class="dropdown-item" data-th-value="car1.png"><img
+                                    th:src="@{/images/car3.png}"
+                                    alt="Иконка"
+                                    width="32" height="32" style="display: block; margin: auto;"/></a></li>
+                        </ul>
+                    </div>
+                    <div class="form-group">
+                        <label for="car-name" class="col-form-label">Название</label>
+                        <input type="text" class="form-control" id="car-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="car-description" class="col-form-label">Описание</label>
+                        <input type="text" class="form-control" id="car-description">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="create_car_button" type="button" class="btn btn-primary">Создать</button>
+                <button id="cancel_car_button1" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteModalWindow" tabindex="-1" aria-labelledby="deleteModalWindowLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="deleteModalWindowLabel">Удалить машину?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body">
+                    Вы точно хотите удалить <span id="car-delete"></span> ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="delete_car_button" type="button" class="btn btn-primary">Удалить</button>
+                <button id="cancel_car_button2" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script th:src="@{js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{js/bootstrap.bundle.js}"></script>
+<script>
+
+    let selectedRow = 0;
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const modal = document.getElementById('addModalWindow');
+        const form = document.getElementById('add-car-form');
+        const selectedCarIcon = document.getElementById('selectedCarIcon');
+        const carCheckbox = document.getElementById('car-checkbox');
+        const carName = document.getElementById('car-name');
+        const carDescription = document.getElementById('car-description');
+
+
+        modal.addEventListener('hidden.bs.modal', function () {
+            form.reset();
+            selectedCarIcon.src = '/images/car1.png';
+            carCheckbox.checked = false;
+            carName.value = '';
+            carDescription.value = '';
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("#car-icon .dropdown-item").forEach(item => {
+            item.addEventListener("click", function () {
+                document.getElementById("selectedCarIcon").src = this.querySelector("img").src;
+            });
+        });
+    });
+
+    function updateCheckBox(id) {
+        const checked = $('#checkbox-' + id).is(':checked');
+
+        fetch(`/api/cars/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            },
+            body: JSON.stringify(checked)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(() => {
+                console.log("Машина обновлена успешно");
+            })
+            .catch(() => {
+                alert("Ошибка обновления машины");
+            });
+    }
+
+
+    document.getElementById('create_car_button').addEventListener('click', function () {
+
+        const carName = document.getElementById('car-name').value;
+        const carDescription = document.getElementById('car-description').value;
+        const carCheckbox = document.getElementById('car-checkbox').checked;
+        const carIcon = document.getElementById('selectedCarIcon').src.split('/').pop();
+
+        const newCar = {
+            name: carName,
+            description: carDescription,
+            checkBox: carCheckbox,
+            icon: carIcon
+        };
+        console.log(newCar);
+        fetch('/api/cars', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf8'
+            },
+            body: JSON.stringify(newCar)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error("Ошибка: ${response.status}");
+                }
+                return response.json()
+            })
+            .then(data => {
+                console.log('Машина добавлена:', data);
+                $('#addModalWindow').hide();
+                document.getElementById('add-car-form').reset();
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+    });
+
+
+    $(document).ready(function () {
+        $('table').on('click', 'tbody tr', function () {
+            if (selectedRow === 0) {
+                $('#delete_button').prop('disabled', false);
+            } else {
+                selectedRow.removeClass('table-primary');
+            }
+            selectedRow = $(this);
+            selectedRow.addClass('table-primary');
+        });
+    });
+
+    $('#deleteModalWindow').on('shown.bs.modal', function () {
+        let modal = $('#deleteModalWindow')
+        let userId = selectedRow.attr("data-id");
+        if (userId) {
+            $.get({
+                url: '/api/cars/' + userId,
+                success: (user) => {
+                    modal.find('#car-delete').text(user.name);
+                },
+                error: (err) => {
+                    alert(err);
+                }
+            });
+        }
+    })
+
+    $('#delete_car_button').click(function () {
+        let modal = $('#deleteModalWindow')
+        let userId = selectedRow.attr("data-id");
+        $.ajax({
+            url: '/api/cars/' + userId,
+            type: 'DELETE',
+            success: function () {
+                location.reload();
+            },
+        });
+        modal.hide();
+    });
+
+
+</script>
+</html>
